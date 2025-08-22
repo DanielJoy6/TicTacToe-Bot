@@ -12,11 +12,6 @@ itself to learn optimal strategies
 * Board is represented by a tuple
 * Each unique state is an individual entry in the q-table
 * Uses epsilon-greedy exploration, then decays epsilon throughout training
-* Q-Table updates using:
-
- \[
-   Q(s,a) \leftarrow Q(s,a) + \alpha \Big[ r + \gamma \cdot \max_{a'} Q(s', a') - Q(s,a) \Big]
-   \]
 
   How to install/train:
   1. Clone the repository:
