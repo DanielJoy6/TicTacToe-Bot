@@ -1,5 +1,5 @@
 #Game class
-import numpy
+import numpy as np
 class Game:
     def __init__(self, players):
         self.players = players
@@ -13,7 +13,7 @@ class Game:
                 print(self.board[x*3+y], end="")
                 print("|", end="")
             print("\n---------")
-    def playGame(self):
+    def play(self):
         while(True):
             move = self.players[0].makeMove(self.board)
             self.board[move] = "X"
