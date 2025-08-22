@@ -1,12 +1,23 @@
 import numpy as np
 import random
 class Player:
-    def __init__(self, name, strategy, epsilon):
+    def __init__(self, name, strategy, epsilon, alpha, gamma):
         self.name = name
         self.strategy = strategy
         self.epsilon = epsilon
         self.q_table = {}
         self.states = []
+        self.alpha = alpha
+        self.gamma = gamma
+    def canonical(self, board):
+        board_np = np.array(board).reshape(3, 3)
+        transformations = []
+        for i in range(4):
+            rotated = np.rot90(board_np, i)
+            transformations.append(rotated)
+            transformations.append(np.fliplr(rotated))
+        canon = min(tuple(t.flatten()) for t in transformations)
+        return canon
     def makeMove(self, board):
         validMoves = [] #board = [" ", "X", "O", "X", "O"...]
         for x in range(len(board)):
@@ -20,7 +31,7 @@ class Player:
         elif(self.strategy == "random"):
             return random.choice(validMoves)
         elif(self.strategy == "AI"):
-            state = tuple(board)
+            state = self.canonical(board)
             move_index = 0
             if state not in self.q_table:
                 self.q_table[state] = [0.0 for _ in range(9)]
@@ -42,9 +53,7 @@ class Player:
     '''
     #New Version
     def update_q_table(self, reward):
-        alpha = 0.1  # Learning rate
-        gamma = 0.9  # Discount factor
         for (state, action_index) in self.states:
             max_future_q = max(self.q_table[state])  # Max Q-value of next state
-            self.q_table[state][action_index] += alpha * (reward + gamma * max_future_q - self.q_table[state][action_index])
+            self.q_table[state][action_index] += self.alpha * (reward + self.gamma * max_future_q - self.q_table[state][action_index])
         self.states.clear()
