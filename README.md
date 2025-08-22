@@ -13,15 +13,18 @@ itself to learn optimal strategies
 * Each unique state is an individual entry in the q-table
 * Uses epsilon-greedy exploration, then decays epsilon throughout training
 
-  How to install/train:
-  1. Clone the repository:
+How to install/train:
+1. Clone the repository:
+
 git clone https://github.com/DanielJoy6/TicTacToe-Bot.git
+
 cd TicTacToe-Bot
-  2. Install numpy
-  3. Train agent with train.py
-     * it will automatically create games and train 2 agents against each other. You're welcome to add more!
+
+2. Install numpy
+3. Train agent with train.py
+  * it will automatically create games and train 2 agents against each other. You're welcome to add more!
      
-  Future Improvements:
-  * Reducing number of boards in Q-table by mapping rotations into single state
-  * Saving & Loading q-table
-  * MatPlotLib plots of winrate over time throughout training
+Future Improvements:
+* Reducing number of boards in Q-table by mapping rotations into single state
+* Saving & Loading q-table
+* MatPlotLib plots of winrate over time throughout training
