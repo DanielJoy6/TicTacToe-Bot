@@ -55,11 +55,11 @@ def evaluate(player1, player2, rounds, strategy):
             ties += 1
         game2.reset()
     print("Done evaluating! Record:")
-    print(f"Wins:{wins} ({wins/1000:.2f}%), Losses: {losses} ({losses/1000:.2f}%),  Ties: {ties} ({ties/1000:2f}%)")
+    print(f"Wins:{wins} ({wins/rounds*100:.2f}%), Losses: {losses} ({losses/rounds*100:.2f}%),  Ties: {ties} ({ties/rounds*100:2f}%)")
 
 
 
 train(player1, player2, 100000)
 
-evaluate(player1, player2, 100000, "random")
-evaluate(player1, player2, 100000, "AI")
+evaluate(player1, player2, 1000000, "random")
+evaluate(player1, player2, 10000, "AI")
