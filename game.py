@@ -1,5 +1,6 @@
 #Game class
 import numpy as np
+import random
 class Game:
     def __init__(self, players):
         self.players = players
@@ -48,3 +49,4 @@ class Game:
         self.board = [" " for x in range(9)]
         self.gameOver = False
         self.winner = ""
+        random.shuffle(self.players) #To prevent someone from always getting to go first

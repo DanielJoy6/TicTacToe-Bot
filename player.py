@@ -1,12 +1,14 @@
 import numpy as np
 import random
 class Player:
-    def __init__(self, name, strategy, epsilon):
+    def __init__(self, name, strategy, epsilon, alpha, gamma):
         self.name = name
         self.strategy = strategy
         self.epsilon = epsilon
         self.q_table = {}
         self.states = []
+        self.alpha = alpha
+        self.gamma = gamma
     def makeMove(self, board):
         validMoves = [] #board = [" ", "X", "O", "X", "O"...]
         for x in range(len(board)):
@@ -42,9 +44,7 @@ class Player:
     '''
     #New Version
     def update_q_table(self, reward):
-        alpha = 0.1  # Learning rate
-        gamma = 0.9  # Discount factor
         for (state, action_index) in self.states:
             max_future_q = max(self.q_table[state])  # Max Q-value of next state
-            self.q_table[state][action_index] += alpha * (reward + gamma * max_future_q - self.q_table[state][action_index])
+            self.q_table[state][action_index] += self.alpha * (reward + self.gamma * max_future_q - self.q_table[state][action_index])
         self.states.clear()
