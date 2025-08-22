@@ -28,3 +28,6 @@ Future Improvements:
 * Reducing number of boards in Q-table by mapping rotations into single state
 * Saving & Loading q-table
 * MatPlotLib plots of winrate over time throughout training
+
+Any questions?
+- **Email**: danieljoy2345@gmail.com
