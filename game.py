@@ -16,12 +16,12 @@ class Game:
             print("\n---------")
     def play(self):
         while(True):
-            move = self.players[0].makeMove(self.board, "X")
+            move = self.players[0].makeMove(self.board)
             self.board[move] = "X"
             self.checkForWin()
             if(self.gameOver):
                 break
-            move = self.players[1].makeMove(self.board, "O")
+            move = self.players[1].makeMove(self.board)
             self.board[move] = "O"
             self.checkForWin()
             if(self.gameOver):
