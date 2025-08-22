@@ -1,8 +1,8 @@
 import numpy as np
 from game import Game
 from player import Player
-player1 = Player("Player1", "AI", 0.99, 0.7, 0.5)
-player2 = Player("Player2", "AI", 0.99, 0.7, 0.5)
+player1 = Player("Player1", "AI", 0.99, 0.1, 0.9)
+player2 = Player("Player2", "AI", 0.99, 0.1, 0.9)
 q_table = {}
 print("Initialized Players")
 def train(player1, player2, training_rounds):
@@ -11,25 +11,25 @@ def train(player1, player2, training_rounds):
     print(f"Training for {training_rounds} rounds")
     for x in range(training_rounds):
         game.play()
-        player1.epsilon = max(0.01, player1.epsilon * 0.99996)
-        player2.epsilon = max(0.01, player2.epsilon * 0.99996)
+        player1.epsilon = max(0.005, player1.epsilon * 0.999)
+        player2.epsilon = max(0.005, player2.epsilon * 0.999)
         if(game.winner == 0):
             if(player1.strategy == "AI"):
                 player1.update_q_table(1)
             if(player2.strategy == "AI"):
-                player2.update_q_table(-1)
+                player2.update_q_table(-5)
             #print("Player 1 wins!")
         elif(game.winner == 1):
             if(player1.strategy == "AI"):
-                player1.update_q_table(-1)
+                player1.update_q_table(-5)
             if(player2.strategy == "AI"):
                 player2.update_q_table(1)
             #print("Player 2 wins!")
         else:
             if(player1.strategy == "AI"):
-                player1.update_q_table(0)
+                player1.update_q_table(-0.2)
             if(player2.strategy == "AI"):
-                player2.update_q_table(0)
+                player2.update_q_table(-0.2)
             #print("It's a tie!")
         game.reset()
     print("Training complete!\n")
