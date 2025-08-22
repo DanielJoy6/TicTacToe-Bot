@@ -31,5 +31,4 @@ Future Improvements:
 * Saving & Loading q-table
 * MatPlotLib plots of winrate over time throughout training
 
-Any questions?
-- **Email**: danieljoy2345@gmail.com
+For any questions, please email me at danieljoy2345@gmail.com
