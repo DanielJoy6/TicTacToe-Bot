@@ -1,4 +1,5 @@
-import numpy
+import numpy as np
+import random
 class Player:
     def __init__(self, name, strategy, epsilon):
         self.name = name
@@ -40,7 +41,7 @@ class Player:
         self.states.clear()
     '''
     #New Version
-    def updateQTable(self, reward):
+    def update_q_table(self, reward):
         alpha = 0.1  # Learning rate
         gamma = 0.9  # Discount factor
         for (state, action_index) in self.states:
