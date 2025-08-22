@@ -5,7 +5,8 @@ This project implements **Q-learning reinforcement learning** to play Tic-Tac-To
 ## Features
 - Q-Learning table mapping states & actions with rewards  
 - Self-play training of 100k+ rounds  
-- Evaluation & training functions  
+- Evaluation & training functions
+- 50% reduced training time due to canonicalization of game states
 
 ## How It Works
 - Board is represented as a tuple  
