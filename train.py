@@ -1,65 +1,98 @@
+"""Train QLPlayers"""
+import sys
+import random
+import pickle
 import numpy as np
 from game import Game
-from player import Player
-player1 = Player("Player1", "AI", 0.99, 0.1, 0.9)
-player2 = Player("Player2", "AI", 0.99, 0.1, 0.9)
-q_table = {}
+from minmax_player import MinMaxPlayer
+from dqn_player import DQNPlayer
+from ql_player import QLPlayer
+random.seed(0)
+np.random.seed(0)
+
+N = int(sys.argv[1])
+decay = (0.05 / 1) ** (1.0 / N)   # ≈ 0.9999089
+
+alpha_decay = (0.01 / 0.1) ** (1.0 / max(1, N))
+#q_table = {}
 print("Initialized Players")
+
+def convert_q_table_negate(q_table):
+    """Helper function to invert q table depending on symbol"""
+    new_q = {}
+    for key, qvals in q_table.items():
+        neg_key = tuple(-x for x in key)  # invert perspective
+        new_q[neg_key] = qvals.copy()
+    return new_q
+
+
+
 def train(player1, player2, training_rounds):
+    """Trains Q learning bots"""
     players = [player1, player2]
-    game = Game(players)
+    game = Game(players, "train")
     print(f"Training for {training_rounds} rounds")
-    for x in range(training_rounds):
+    for _ in range(training_rounds):
         game.play()
-        player1.epsilon = max(0.005, player1.epsilon * 0.999)
-        player2.epsilon = max(0.005, player2.epsilon * 0.999)
-        if(game.winner == 0):
-            if(player1.strategy == "AI"):
-                player1.update_q_table(1)
-            if(player2.strategy == "AI"):
-                player2.update_q_table(-5)
-            #print("Player 1 wins!")
-        elif(game.winner == 1):
-            if(player1.strategy == "AI"):
-                player1.update_q_table(-5)
-            if(player2.strategy == "AI"):
-                player2.update_q_table(1)
-            #print("Player 2 wins!")
-        else:
-            if(player1.strategy == "AI"):
-                player1.update_q_table(-0.2)
-            if(player2.strategy == "AI"):
-                player2.update_q_table(-0.2)
-            #print("It's a tie!")
+        if isinstance(player1, QLPlayer):
+            player1.epsilon = max(0.05, player1.epsilon * decay)
+            player1.alpha = max(0.01, player1.alpha * alpha_decay)
+        if isinstance(player2, QLPlayer):
+            player2.epsilon = max(0.05, player2.epsilon * decay)
+            player2.alpha = max(0.01, player2.alpha * alpha_decay)
         game.reset()
+    if isinstance(player1, QLPlayer):
+        with open("QLTableX", 'wb') as file:
+            pickle.dump(player1.Q_X, file)
+        with open("QLTableO", 'wb') as file:
+            pickle.dump(player1.Q_O, file)
+    if isinstance(player1, DQNPlayer):
+        with open('DQNMemory.pkl', 'wb') as f:
+            pickle.dump(player1.memory, f)
+
     print("Training complete!\n")
-def evaluate(player1, player2, rounds, strategy):
+
+
+def evaluate(player1, player2, rounds):
+    """Evaluates two players, no updating q tables"""
     players = [player1, player2]
-    player1.epsilon = 0
-    if(strategy == "random"):
-        print("Evaluating against an opponent who moves randomly...")
-        player2.strategy = "random"
-    elif(strategy == "AI"):
-        print("\nEvaluating against itself...")
-        player2.strategy = "AI"
+    if isinstance(player1, QLPlayer):
+        player1.epsilon = 0
+    if isinstance(player2, QLPlayer):
         player2.epsilon = 0
-    game2 = Game(players)
-    wins, losses, ties = 0,0,0
-    for x in range(rounds):
+    game2 = Game(players, "evaluation")
+    print(f"Evaluating for {rounds} rounds")
+    wins, losses, ties = 0, 0, 0
+    for _ in range(rounds):
         game2.play()
-        if(game2.winner == 0):
+        if game2.winner == 1:
             wins += 1
-        elif(game2.winner == 1):
+        elif game2.winner == -1:
             losses += 1
         else:
             ties += 1
         game2.reset()
     print("Done evaluating! Record:")
-    print(f"Wins:{wins} ({wins/rounds*100:.2f}%), Losses: {losses} ({losses/rounds*100:.2f}%),  Ties: {ties} ({ties/rounds*100:2f}%)")
+    print(
+        f"Wins:{wins} ({wins/rounds*100:.2f}%), Losses: {losses}({losses/rounds*100:.2f}%),  Ties: {ties} ({ties/rounds*100:2f}%)"
+    )
 
 
+first_player = QLPlayer("Player1", 0.99, 0.1, 0.95, symbol=1)
+second_player = MinMaxPlayer("Player2", symbol=-1)
+if len(sys.argv) == 1:
+    train(first_player, second_player, 1000)
+else:
+    train(first_player, second_player, int(sys.argv[1]))
 
-train(player1, player2, 100000)
+if isinstance(first_player, QLPlayer):
+    first_player.states.clear()
+if isinstance(second_player, QLPlayer):
+    second_player.states.clear()
 
-evaluate(player1, player2, 1000000, "random")
-evaluate(player1, player2, 10000, "AI")
+evaluate(first_player, second_player, 500)
+
+first_player = DQNPlayer("Player1", symbol=1)
+second_player = MinMaxPlayer("Player2", symbol=-1)
+train(first_player, second_player, 5000)
+evaluate(first_player, second_player, 500)
